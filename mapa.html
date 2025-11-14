@@ -637,31 +637,27 @@
             document.getElementById('time-value').textContent = formattedTime;
         }
         setInterval(updateDateTime, 1000);
-        updateDateTime();
+        updateDateTime():
 
         // Atualizar clima (previsão para hoje)
         async function updateWeather() {
             try {
                 const lat = -12.9777;
-                const lon = -38.5016;
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_min,temperature_2m_max,precipitation_sum,weathercode&timezone=America%2FBahia`;
-
+            const lon = -38.5016;
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_min,temperature_2m_max,precipitation_sum,weathercode&timezone=America%2FBahia`;
+                
                 const response = await fetch(url);
                 const data = await response.json();
                 if (data.daily && data.daily.time && data.daily.time.length) {
-                    
-                    // Encontra o índice do dia de hoje na resposta
                     const hoje = new Date();
                     const hojeStr = hoje.toISOString().slice(0, 10);
                     let idxHoje = data.daily.time.findIndex(t => t === hojeStr);
-                    if (idxHoje === -1) idxHoje = 0; // fallback para o primeiro dia caso não encontre
-                    
-                    // Dados do dia atual
+                    if (idxHoje === -1) idxHoje = 0;
+
                     const tempMin = data.daily.temperature_2m_min[idxHoje].toFixed(1);
                     const tempMax = data.daily.temperature_2m_max[idxHoje].toFixed(1);
                     const chuva = data.daily.precipitation_sum[idxHoje];
                     const weatherCode = data.daily.weathercode[idxHoje];
-                    // Tabela resumida de condições
                     const condition = {
                         0: "Céu Limpo",
                         1: "Principalmente Limpo",
@@ -679,20 +675,20 @@
                         81: "Pancadas Moderadas",
                         82: "Pancadas Fortes",
                     }[weatherCode] || "Tempo Indefinido";
-                    
-                    document.getElementById('weather-value').textContent = 
-                        `${condition}, ${tempMin}°C/${tempMax}°C, Precipitação: ${chuva}mm`
+
+                    document.getElementById('weather-value').textContent =
+                        `${condition}, ${tempMin}°C/${tempMax}°C, Precipitação: ${chuva}mm`;
                 } else {
                     document.getElementById('weather-value').textContent = "Indisponível";
                 }
-            } catch (error) 
+            } catch (error) {
                 document.getElementById('weather-value').textContent = "Indisponível";
-            console.error('Erro ao obter dados do clima:', error);
+                console.error('Erro ao obter dados do clima:', error);
+            }
         }
-        
-        setInterval(updateWeather, 18000); // Atualiza a cada 18s
+        setInterval(updateWeather, 18000);
         updateWeather();
-
+        
         // ================================ NOVO CÓDIGO IRAS ===========================
         // Função para calcular o IRAS e determinar o nível de risco
         function calcularIRAS({
