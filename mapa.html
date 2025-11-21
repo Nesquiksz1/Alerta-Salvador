@@ -640,15 +640,16 @@
         setInterval(updateDateTime, 1000);
         updateDateTime();
 
-        // Atualizar clima (previsão para hoje)
+        // Atualizar clima (previsão para hoje) 
         async function updateWeather() {
             try {
                 const lat = -12.9777;
-            const lon = -38.5016;
-            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_min,temperature_2m_max,precipitation_sum,weathercode&timezone=America%2FBahia`;
-                
+                const lon = -38.5016;
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_min,temperature_2m_max,precipitation_sum,weathercode&timezone=America%2FBahia`;
+
                 const response = await fetch(url);
                 const data = await response.json();
+                
                 if (data.daily && data.daily.time && data.daily.time.length) {
                     const hoje = new Date();
                     const hojeStr = hoje.toISOString().slice(0, 10);
@@ -659,26 +660,54 @@
                     const tempMax = data.daily.temperature_2m_max[idxHoje].toFixed(1);
                     const chuva = data.daily.precipitation_sum[idxHoje];
                     const weatherCode = data.daily.weathercode[idxHoje];
-                    const condition = {
+
+            // 🔥 Lista completa de códigos da Open-Meteo
+                    const conditionMap = {
                         0: "Céu Limpo",
-                        1: "Parcialmente Limpo",
+                        1: "Principalmente Limpo",
                         2: "Parcialmente Nublado",
                         3: "Nublado",
+
                         45: "Névoa",
-                        48: "Névoa",
+                        48: "Névoa Congelante",
+
                         51: "Chuvisco Fraco",
                         53: "Chuvisco Moderado",
                         55: "Chuvisco Intenso",
+
+                        56: "Chuvisco Congelante Fraco",
+                        57: "Chuvisco Congelante Intenso",
+
                         61: "Chuva Fraca",
                         63: "Chuva Moderada",
                         65: "Chuva Forte",
+
+                        66: "Chuva Congelante Fraca",
+                        67: "Chuva Congelante Forte",
+
+                        71: "Neve Fraca",
+                        73: "Neve Moderada",
+                        75: "Neve Forte",
+
+                        77: "Cristais de Gelo",
+
                         80: "Pancadas Fracas",
                         81: "Pancadas Moderadas",
                         82: "Pancadas Fortes",
-                    }[weatherCode] || "Tempo Indefinido";
 
+                        85: "Pancadas de Neve Fracas",
+                        86: "Pancadas de Neve Fortes",
+
+                        95: "Trovoada",
+                        96: "Trovoada com Granizo Fraco",
+                        99: "Trovoada com Granizo Forte"
+                    };
+
+            // Nunca mais vai dar "Tempo indefinido", só se criassem código novo
+                    const condition = conditionMap[weatherCode] || "Condição Desconhecida";
                     document.getElementById('weather-value').textContent =
                         `${condition}, ${tempMin}°C/${tempMax}°C, Precipitação: ${chuva}mm`;
+       
                 } else {
                     document.getElementById('weather-value').textContent = "Indisponível";
                 }
@@ -687,7 +716,8 @@
                 console.error('Erro ao obter dados do clima:', error);
             }
         }
-        setInterval(updateWeather, 3600000);
+
+        setInterval(updateWeather, 3600000); // Atualiza a cada 1h (daily não muda antes disso)
         updateWeather();
         
         // ================================ NOVO CÓDIGO IRAS ===========================
