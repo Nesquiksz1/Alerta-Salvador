@@ -482,7 +482,7 @@
 <body>
     <div class="header">
         <div class="logo-container">
-            <img src="logo_seguranca.jpg" alt="🛡️" class="logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+            <img src="logo_alerta_salvador.png" alt="🛡️" class="logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
             <span style="display:none; font-size: 24px;">🛡️</span>
             <h1 class="site-title">
                 <span class="main-title">ALERTA SALVADOR 7.0</span>
@@ -640,7 +640,7 @@
         setInterval(updateDateTime, 1000);
         updateDateTime();
 
-        // Atualizar clima (previsão para hoje) 
+        // Atualizar clima (previsão para hoje)
         async function updateWeather() {
             try {
                 const lat = -12.9777;
@@ -649,7 +649,7 @@
 
                 const response = await fetch(url);
                 const data = await response.json();
-                
+
                 if (data.daily && data.daily.time && data.daily.time.length) {
                     const hoje = new Date();
                     const hojeStr = hoje.toISOString().slice(0, 10);
@@ -661,62 +661,67 @@
                     const chuva = data.daily.precipitation_sum[idxHoje];
                     const weatherCode = data.daily.weathercode[idxHoje];
 
-            // Atualizar clima (previsão para hoje)
-                    async function updateWeather() {
-                        try {
-                            const lat = -12.9777;
-                            const lon = -38.5016;
-                            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
-                                `&daily=temperature_2m_min,temperature_2m_max,precipitation_sum,weathercode` +
-                                `&timezone=auto&forecast_days=1`;
-                            const response = await fetch(url);
-                            
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
+            // 🔥 Lista completa de códigos da Open-Meteo
+            
+                    const conditionMap = {
+                        0: "Céu Limpo",
+                        1: "Principalmente Limpo",
+                        2: "Parcialmente Nublado",
+                        3: "Nublado",
 
-                            const data = await response.json();
-                            
-                            if (!data.daily || !data.daily.time || !data.daily.time.length) {
-                                document.getElementById('weather-value').textContent = "Indisponível";
-                                return;
-                            }
+                        45: "Névoa",
+                        48: "Névoa Congelante",
 
-                            const tempMin = Number(data.daily.temperature_2m_min[0]).toFixed(1);
-                            const tempMax = Number(data.daily.temperature_2m_max[0]).toFixed(1);
-                            const chuva = Number(data.daily.precipitation_sum[0]);
-                            const weatherCode = Number(data.daily.weathercode[0]);
+                        51: "Chuvisco Fraco",
+                        53: "Chuvisco Moderado",
+                        55: "Chuvisco Intenso",
 
-                            const conditionMap = {
-                                0: "Céu Limpo",
-                                1: "Principalmente Limpo",
-                                2: "Parcialmente Nublado",
-                                3: "Nublado",
-                                45: "Névoa",
-                                48: "Névoa Congelante",
-                                51: "Chuvisco Fraco",
-                                53: "Chuvisco Moderado",
-                                55: "Chuvisco Intenso",
-                                61: "Chuva Fraca",
-                                63: "Chuva Moderada",
-                                65: "Chuva Forte",
-                                80: "Pancadas Fracas",
-                                81: "Pancadas Moderadas",
-                                82: "Pancadas Fortes",
-                                95: "Trovoada"
-                            };
-                            const condition = conditionMap[weatherCode] || "Condição Desconhecida";
-                            document.getElementById('weather-value').textContent =
-                                `${condition}, ${tempMin}°C/${tempMax}°C, Chuva: ${chuva}mm`;
-                        } catch (error) {
-                            document.getElementById('weather-value').textContent = "Indisponível";
-                            console.error('Erro ao obter dados do clima:', error);
-                        }
-                    }
+                        56: "Chuvisco Congelante Fraco",
+                        57: "Chuvisco Congelante Intenso",
+
+                        61: "Chuva Fraca",
+                        63: "Chuva Moderada",
+                        65: "Chuva Forte",
+
+                        66: "Chuva Congelante Fraca",
+                        67: "Chuva Congelante Forte",
+
+                        71: "Neve Fraca",
+                        73: "Neve Moderada",
+                        75: "Neve Forte",
+
+                        77: "Cristais de Gelo",
+
+                        80: "Pancadas Fracas",
+                        81: "Pancadas Moderadas",
+                        82: "Pancadas Fortes",
+
+                        85: "Pancadas de Neve Fracas",
+                        86: "Pancadas de Neve Fortes",
+
+                        95: "Trovoada",
+                        96: "Trovoada com Granizo Fraco",
+                        99: "Trovoada com Granizo Forte"
+                    };
+
+            // Nunca mais vai dar "Tempo indefinido", só se criassem código novo
+                    const condition = conditionMap[weatherCode] || "Condição Desconhecida";
+
+                    document.getElementById('weather-value').textContent =
+                        `${condition}, ${tempMin}°C/${tempMax}°C, Precipitação: ${chuva}mm`;
                     
+                } else {
+                    document.getElementById('weather-value').textContent = "Indisponível";
+                }
+            } catch (error) {
+                document.getElementById('weather-value').textContent = "Indisponível";
+                console.error('Erro ao obter dados do clima:', error);
+            }
+        }
+
         setInterval(updateWeather, 3600000); // Atualiza a cada 1h (daily não muda antes disso)
         updateWeather();
-        
+
         // ================================ NOVO CÓDIGO IRAS ===========================
         // Função para calcular o IRAS e determinar o nível de risco
         function calcularIRAS({
@@ -760,7 +765,7 @@
                 center: [-12.918201, -38.481219],
                 radius: 600,
                 stats: { tiroteios: 73, 
-                        vitimas: 57, 
+                        vitimas: 58, 
                         baleados: 14, 
                         operacoes: 20, 
                         disputas: 7 },
@@ -771,8 +776,8 @@
                 center: [-12.970441, -38.464628],
                 radius: 800,
                 stats: { tiroteios: 66, 
-                        vitimas: 39, 
-                        baleados: 4, 
+                        vitimas: 40, 
+                        baleados: 04, 
                         operacoes: 24,
                         disputas: 10 },
                 recommendation: "Evite circular à noite. Mantenha-se atento em áreas comerciais. Não exiba objetos de valor."
@@ -782,10 +787,10 @@
                 center: [-12.941721, -38.480473],
                 radius: 700,
                 stats: { tiroteios: 53, 
-                        vitimas: 48,
-                        baleados: 9,
+                        vitimas: 50,
+                        baleados: 09,
                         operacoes: 28,
-                        disputas: 4 },
+                        disputas: 04 },
                 recommendation: "Área com alta presença de facções. Evite circular sem conhecer a região. Prefira horários comerciais."
             },
             {
@@ -816,7 +821,7 @@
                 radius: 1200,
                 stats: { tiroteios: 50,
                         vitimas: 33,
-                        baleados: 10,
+                        baleados: 11,
                         operacoes: 33, 
                         disputas: 1 },
                 recommendation: "Área com presença de facções. Evite circular sem conhecer a região. Prefira horários comerciais."
@@ -826,8 +831,8 @@
                 center: [-12.995377, -38.502772],
                 radius: 600,
                 stats: { tiroteios: 95,
-                        vitimas: 47,
-                        baleados: 15,
+                        vitimas: 33,
+                        baleados: 11,
                         operacoes: 46,
                         disputas: 27 },
                 recommendation: "Mantenha-se atento em áreas comerciais. Evite ruas menos movimentadas. Não exiba objetos de valor."
@@ -838,7 +843,7 @@
                 radius: 1000,
                 stats: { tiroteios: 40,
                         vitimas: 30,
-                        baleados: 4, 
+                        baleados: 04, 
                         operacoes: 16, 
                         disputas: 2 },
                 recommendation: "Mantenha-se atento em áreas turísticas. Evite praias desertas. Não exiba objetos de valor."
@@ -849,9 +854,9 @@
                 radius: 800,
                 stats: { tiroteios: 48,
                         vitimas: 33, 
-                        baleados: 9,
+                        baleados: 09,
                         operacoes: 25,
-                        disputas: 2 },
+                        disputas: 02 },
                 recommendation: "Mantenha-se atento em áreas comerciais. Evite circular à noite. Não exiba objetos de valor."
             },
             {
@@ -859,8 +864,8 @@
                 center: [-12.863425, -38.474542],
                 radius: 800,
                 stats: { tiroteios: 41,
-                        vitimas: 21,
-                        baleados: 13, 
+                        vitimas: 22,
+                        baleados: 14, 
                         operacoes: 19, 
                         disputas: 13 },
                 recommendation: "Evite circular à noite. Mantenha-se atento em áreas comerciais. Não exiba objetos de valor."
@@ -870,8 +875,8 @@
                 center: [-12.834079, -38.469006],
                 radius: 800,
                 stats: { tiroteios: 41, 
-                        vitimas: 34,
-                        baleados: 8, 
+                        vitimas: 35,
+                        baleados: 09, 
                         operacoes: 10,
                         disputas: 2 },
                 recommendation: "Evite circular sem conhecer a região. Prefira horários comerciais. Não exiba objetos de valor."
@@ -941,7 +946,18 @@
                         operacoes: 16,
                         disputas: 2 },
                 recommendation: "Mantenha-se atento em áreas comerciais. Evite ruas menos movimentadas. Não exiba objetos de valor."
-            }
+            }, 
+            {
+                name: "Cajazeiras",
+                center: [0 , 0],
+                radius: 0,
+                stats: { tiroteios: 0 , 
+                        vitimas: 0 ,
+                        baleados: 0, 
+                        operacoes: 0,
+                        disputas: 0 },
+                recommendation: "Evite circular sem conhecer a região. Prefira horários comerciais. Não exiba objetos de valor."
+            },
         ];
 
         // Gera o array final com IRAS e nível de risco calculados
@@ -1211,3 +1227,6 @@
     </script>
 </body>
 </html>
+
+
+       
